@@ -37,6 +37,9 @@ def fuzzy_match(str1, str2):
 	return fuzz.ratio(str1, str2)
 
 def find_name(text, df):
+	"""
+	Returns the row in DF whose Trade Name or Legal Name cloest matches TEXT
+	"""
 	best_match = None
 	best_score = 0
 	for row in df:
@@ -54,17 +57,27 @@ def find_name(text, df):
 
 
 def chat(text):
+	"""
+	Takes in a company name and returns the row in the database that best matches the Trade Name or Legal Name
+	"""
 	return find_name(text, data)
 
 def bw_amt(row):
-	# cmp_cols = [("cmp_assd_amt" in col) for col in row.index]
-	# cmp_amt = sum(row[cmp_cols])
+	"""
+	Returns BW ATP Amount (Total Backwages Agreed To Pay) from ROW
+	"""
 	return row["bw_atp_amt"]
 
 def cmp_assd(row):
+	"""
+	Returns Total CMP (Civil Monetary Penalties) assessments from ROW
+	"""
 	return row["cmp_assd_cnt"]
 
 def case_counts(row):
+	"""
+	Returns the Case Violation Count from ROW
+	"""
 	return row["case_violtn_cnt"]
 
 company_names = pregen_company_names(data)
