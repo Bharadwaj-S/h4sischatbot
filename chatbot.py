@@ -56,11 +56,13 @@ def find_name(text, df):
 def chat(text):
 	return find_name(text, data)
 
-def total_amt(row):
-	cmp_cols = [("cmp_assd_amt" in col) for col in row.index]
-	cmp_amt = sum(row[cmp_cols])
-	bw_amt = row["bw_atp_amt"]
-	return cmp_amt + bw_amt
+def bw_amt(row):
+	# cmp_cols = [("cmp_assd_amt" in col) for col in row.index]
+	# cmp_amt = sum(row[cmp_cols])
+	return row["bw_atp_amt"]
+
+def cmp_assd(row):
+	return row["cmp_assd_cnt"]
 
 def case_counts(row):
 	return row["case_violtn_cnt"]
