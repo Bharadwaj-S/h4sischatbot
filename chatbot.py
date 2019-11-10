@@ -95,7 +95,7 @@ def all_results(text):
 	addresses = []
 	for result in all_results:
 		addresses.append(address(result))
-	return list(enumerate(addresses))
+	return list(enumerate(addresses, 1))
 
 
 # company_names = pregen_company_names(data)
