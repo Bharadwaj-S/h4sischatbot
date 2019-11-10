@@ -90,12 +90,31 @@ def address(row):
 	zipcode = str(row["zip_cd"])
 	return name + ", " + street + ", " + city + ", " + state + " " + zipcode
 
-def all_results(text):
-	all_results = chat(text)
+def zipcode(row):
+	return row["zip_cd"]
+
+def search_by_zip(companies, given_zip):
+	results = []
+	for company in companies:
+		if zipcode(company) == given_zip:
+			results.append(company)
+	return results
+
+
+def all_results(companies):
 	addresses = []
-	for result in all_results:
-		addresses.append(address(result))
+	for company in companies:
+		addresses.append(address(company))
 	return list(enumerate(addresses, 1))
+
+def final_response(row):
+	c_name = str(row["trade_nm"])
+	backwages = str(bw_amt(row))
+	cmp_assessed = str(cmp_assd(row))
+	case_cnt = str(case_counts(row))
+	return f"{c_name}: # of cases: {case_cnt}, Wage Theft ${backwages}, Fines owed to government ${cmp_assessed}"
+
+
 
 
 # company_names = pregen_company_names(data)

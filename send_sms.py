@@ -1,19 +1,53 @@
-# Download the helper library from https://www.twilio.com/docs/python/install
-from twilio.rest import Client
+from flask import Flask, request, redirect
+from twilio.twiml.messaging_response import MessagingResponse
+import chatbot
 
+app = Flask(__name__)
 
-# Your Account Sid and Auth Token from twilio.com/console
-# DANGER! This is insecure. See http://twil.io/secure
-account_sid = 'ACa8d63de6f10787427b81dad99e6b775c'
-auth_token = '416a389edf8e0963d0d6967ae8960e58'
-client = Client(account_sid, auth_token)
+companies = None
 
-message = client.messages.create(
-                     body="Join Earth's mightiest heroes. Like Kevin Bacon.",
-                     from_='+12024109147',
-                     to='+15107015152'
-                 )
+@app.route("/sms", methods=['GET', 'POST'])
+def incoming_sms():
+    """Send a dynamic reply to an incoming text message"""
+    # Get the message the user sent our Twilio number
+    global companies
 
-print(message.sid)
+    body = request.values.get('Body', None)
+    message_limit = 500
 
+    # Start our TwiML response
+    resp = MessagingResponse()
 
+    # Determine the right reply for this message
+    try:
+        if body == 'Wage Theft':
+            resp.message("Thanks for using our service. Please enter the name of the company you're interested in")
+        elif body.isdigit():
+            body = int(body)
+            if body < 10000 and companies:
+                company = companies[body - 1]
+                msg = chatbot.final_response(company)
+                resp.message(msg)
+            elif body >= 10000:
+                new_companies = chatbot.search_by_zip(companies, body)
+                msg = str(chatbot.all_results(new_companies))
+                if len(msg) <= message_limit:
+                    resp.message(msg)
+                else:
+                    resp.message(f"There are a lot of results for {body}. Please enter the zip code of the company.")
+            else:
+                resp.message("Please enter the name of the company you're interested in")
+        else:
+            companies = chatbot.chat(body)
+            msg = str(chatbot.all_results(companies))
+            if len(msg) <= message_limit:
+                resp.message(msg)
+            else:
+                resp.message(f"There are a lot of results for {body}. Please enter the zip code of the company.")
+    except Exception as e:
+        resp.message(str(e))
+
+    return str(resp)
+
+if __name__ == "__main__":
+    app.run(debug=True)
