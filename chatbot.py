@@ -2,10 +2,6 @@ import pandas as pd
 import string
 from fuzzywuzzy import fuzz
 
-# violating_words = ["abuse","contravention","encroachment","infraction","infringement",
-# 	"misdemeanor","negligence","offense","transgression","break","breaking","illegality",
-# 	"misbehavior","nonobservance","rupture","trespass","wrong","transgressing","trespassing",
-# 	"violating"]
 
 df = pd.read_csv("Wage_theft_all_zipcodes_NYC.csv")
 data = [row for row in df.iterrows()]
@@ -23,27 +19,15 @@ def clean_text(txt):
 			processed_text += c
 	return processed_text
 
-def pregen_company_names(df):
-	"""
-	Returns cleaned list of company names from DF
-	"""
-	names = set()
-	for row in df:
-		row = row[1]
-		names.add(clean_text(row["trade_nm"]))
-		names.add(clean_text(row["legal_name"]))
-	return names
-
 def fuzzy_match(str1, str2):
 	str1 = clean_text(str1)
 	str2 = clean_text(str2)
 	return fuzz.token_set_ratio(str1, str2)
 
-def find_names(text, df):
+def find_names(text, df, threshold=85):
 	"""
-	Returns the rows in DF whose Trade Name or Legal Name matches TEXT at least 90%
+	Returns the rows in DF whose Trade Name or Legal Name matches TEXT at least THRESHOLD%
 	"""
-	threshold = 85
 	matches = []
 	for row in df:
 		row = row[1]
@@ -79,6 +63,12 @@ def case_counts(row):
 	"""
 	return row["case_violtn_cnt"]
 
+def zipcode(row):
+	"""
+	Returns the zip code from ROW
+	"""
+	return row["zip_cd"]
+
 def address(row):
 	"""
 	Returns the name and address from ROW
@@ -90,10 +80,10 @@ def address(row):
 	zipcode = str(row["zip_cd"])
 	return name + ", " + street + ", " + city + ", " + state + " " + zipcode
 
-def zipcode(row):
-	return row["zip_cd"]
-
 def search_by_zip(companies, given_zip):
+	"""
+	Return the compaanies in COMPANIES that have zipcode GIVEN_ZIP
+	"""
 	results = []
 	for company in companies:
 		if zipcode(company) == given_zip:
@@ -102,12 +92,18 @@ def search_by_zip(companies, given_zip):
 
 
 def all_addresses(companies):
+	"""
+	Returns a numbered list of the addresses of each company in COMPANIES
+	"""
 	addresses = []
 	for company in companies:
 		addresses.append(address(company))
 	return list(enumerate(addresses, 1))
 
 def format_addresses(addresses):
+	"""
+	Formats the list of addresses for readability
+	"""
 	if not addresses:
 		return "Sorry, we didn't find any results for that name. Please check for any typos."
 	result = "\nHere are possible matches: \n"
@@ -117,6 +113,9 @@ def format_addresses(addresses):
 	return result
 
 def final_response(row):
+	"""
+	Returns the relevant information about company from ROW
+	"""
 	c_name = str(row["trade_nm"])
 	backwages = str(bw_amt(row))
 	cmp_assessed = str(cmp_assd(row))
@@ -124,9 +123,3 @@ def final_response(row):
 	company_info = f"\n{c_name}: \nNumber of labor violations: {case_cnt} \nWages kept from employees: ${backwages} \nFines owed to government: ${cmp_assessed}"
 	plug = "\nTo learn more visit www.documentedny.com"
 	return company_info + plug
-
-
-
-
-# company_names = pregen_company_names(data)
-# chat("Carma East")
