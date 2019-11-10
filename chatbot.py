@@ -51,7 +51,6 @@ def find_names(text, df):
 		score2 = fuzzy_match(row["legal_name"], text)
 		max_score = max(score1, score2)
 		if (max_score > threshold):
-			print(f"Name: {row['trade_nm']}, Score: {max_score}")
 			matches.append(row)
 	return matches
 
@@ -79,6 +78,16 @@ def case_counts(row):
 	Returns the Case Violation Count from ROW
 	"""
 	return row["case_violtn_cnt"]
+
+def address(row):
+	"""
+	Returns the address from ROW
+	"""
+	street = str(row["street_addr_1_txt"])
+	city = str(row["cty_nm"])
+	state = str(row["st_cd"])
+	zipcode = str(row["zip_cd"])
+	return street + ", " + city + ", " + state + " " + zipcode
 
 
 # company_names = pregen_company_names(data)
