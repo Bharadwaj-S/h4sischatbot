@@ -2,10 +2,10 @@ import pandas as pd
 import string
 from fuzzywuzzy import fuzz
 
-violating_words = ["abuse","contravention","encroachment","infraction","infringement",
-	"misdemeanor","negligence","offense","transgression","break","breaking","illegality",
-	"misbehavior","nonobservance","rupture","trespass","wrong","transgressing","trespassing",
-	"violating"]
+# violating_words = ["abuse","contravention","encroachment","infraction","infringement",
+# 	"misdemeanor","negligence","offense","transgression","break","breaking","illegality",
+# 	"misbehavior","nonobservance","rupture","trespass","wrong","transgressing","trespassing",
+# 	"violating"]
 
 data = pd.read_csv("Wage_theft_all_zipcodes_NYC.csv")
 data = [row for row in data.iterrows()]
@@ -79,6 +79,7 @@ def case_counts(row):
 	Returns the Case Violation Count from ROW
 	"""
 	return row["case_violtn_cnt"]
+
 
 company_names = pregen_company_names(data)
 
