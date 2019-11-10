@@ -1,4 +1,4 @@
-// Run the below commmands in terminal to install requirements if you don't already have them.
-
-pip install fuzzywuzzy
-pip isntall pandas
+pandas
+fuzzywuzzy
+twilio
+flask
