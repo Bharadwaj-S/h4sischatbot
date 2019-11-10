@@ -37,7 +37,7 @@ def pregen_company_names(df):
 def fuzzy_match(str1, str2):
 	str1 = clean_text(str1)
 	str2 = clean_text(str2)
-	return fuzz.token_sort_ratio(str1, str2)
+	return fuzz.token_set_ratio(str1, str2)
 
 def find_names(text, df):
 	"""
