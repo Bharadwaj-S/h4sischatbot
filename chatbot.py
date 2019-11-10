@@ -43,7 +43,7 @@ def find_names(text, df):
 	"""
 	Returns the rows in DF whose Trade Name or Legal Name matches TEXT at least 90%
 	"""
-	threshold = 90
+	threshold = 85
 	matches = []
 	for row in df:
 		row = row[1]
@@ -63,7 +63,7 @@ def chat(text):
 
 def bw_amt(row):
 	"""
-	Returns BW ATP Amount (Total Backwages Agreed To Pay) from ROW
+	Returns Total Backwages Agreed To Pay from ROW
 	"""
 	return row["bw_atp_amt"]
 
@@ -81,13 +81,21 @@ def case_counts(row):
 
 def address(row):
 	"""
-	Returns the address from ROW
+	Returns the name and address from ROW
 	"""
+	name = str(row["trade_nm"])
 	street = str(row["street_addr_1_txt"])
 	city = str(row["cty_nm"])
 	state = str(row["st_cd"])
 	zipcode = str(row["zip_cd"])
-	return street + ", " + city + ", " + state + " " + zipcode
+	return name + ", " + street + ", " + city + ", " + state + " " + zipcode
+
+def all_results(text):
+	all_results = chat(text)
+	addresses = []
+	for result in all_results:
+		addresses.append(address(result))
+	return addresses
 
 
 # company_names = pregen_company_names(data)
