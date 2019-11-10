@@ -41,23 +41,24 @@ def fuzzy_match(str1, str2):
 
 def find_names(text, df):
 	"""
-	Returns the rows in DF whose Trade Name or Legal Name matches TEXT at least 80%
+	Returns the rows in DF whose Trade Name or Legal Name matches TEXT at least 90%
 	"""
-	threshold = 0.8
+	threshold = 90
 	matches = []
 	for row in df:
 		row = row[1]
 		score1 = fuzzy_match(row["trade_nm"], text)
 		score2 = fuzzy_match(row["legal_name"], text)
 		max_score = max(score1, score2)
-		if max_score > threshold:
+		if (max_score > threshold):
+			print(f"Name: {row['trade_nm']}, Score: {max_score}")
 			matches.append(row)
 	return matches
 
 
 def chat(text):
 	"""
-	Takes in a company name and returns the row in the database that best matches the Trade Name or Legal Name
+	Takes in a company name and returns the rows in the database that best match the Trade Name or Legal Name
 	"""
 	return find_names(text, data)
 
@@ -80,6 +81,5 @@ def case_counts(row):
 	return row["case_violtn_cnt"]
 
 
-company_names = pregen_company_names(data)
-
+# company_names = pregen_company_names(data)
 # chat("Carma East")
