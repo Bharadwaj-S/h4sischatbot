@@ -7,8 +7,8 @@ from fuzzywuzzy import fuzz
 # 	"misbehavior","nonobservance","rupture","trespass","wrong","transgressing","trespassing",
 # 	"violating"]
 
-data = pd.read_csv("Wage_theft_all_zipcodes_NYC.csv")
-data = [row for row in data.iterrows()]
+df = pd.read_csv("Wage_theft_all_zipcodes_NYC.csv")
+data = [row for row in df.iterrows()]
 printables = string.printable[:62]
 printables += " "
 printables = set(printables)
@@ -24,6 +24,9 @@ def clean_text(txt):
 	return processed_text
 
 def pregen_company_names(df):
+	"""
+	Returns cleaned list of company names from DF
+	"""
 	names = set()
 	for row in df:
 		row = row[1]
@@ -34,33 +37,29 @@ def pregen_company_names(df):
 def fuzzy_match(str1, str2):
 	str1 = clean_text(str1)
 	str2 = clean_text(str2)
-	return fuzz.ratio(str1, str2)
+	return fuzz.token_sort_ratio(str1, str2)
 
-def find_name(text, df):
+def find_names(text, df):
 	"""
-	Returns the row in DF whose Trade Name or Legal Name cloest matches TEXT
+	Returns the rows in DF whose Trade Name or Legal Name matches TEXT at least 80%
 	"""
-	best_match = None
-	best_score = 0
+	threshold = 0.8
+	matches = []
 	for row in df:
 		row = row[1]
 		score1 = fuzzy_match(row["trade_nm"], text)
 		score2 = fuzzy_match(row["legal_name"], text)
 		max_score = max(score1, score2)
-		if max_score > best_score:
-			best_score = max_score
-			best_match = row
-	if best_score > 0.7:
-		return best_match
-	else:
-		return None
+		if max_score > threshold:
+			matches.append(row)
+	return matches
 
 
 def chat(text):
 	"""
 	Takes in a company name and returns the row in the database that best matches the Trade Name or Legal Name
 	"""
-	return find_name(text, data)
+	return find_names(text, data)
 
 def bw_amt(row):
 	"""
