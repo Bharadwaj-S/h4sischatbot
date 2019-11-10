@@ -108,7 +108,9 @@ def all_addresses(companies):
 	return list(enumerate(addresses, 1))
 
 def format_addresses(addresses):
-	result = "\nHere are possible matches \n"
+	if not addresses:
+		return "Sorry, we didn't find any results for that name. Please check for any typos."
+	result = "\nHere are possible matches: \n"
 	for address in addresses:
 		result += str(address[0]) + ". " + str(address[1]) + "\n"
 	result += "Please text back the number of the company you're interested in"

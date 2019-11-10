@@ -29,8 +29,8 @@ def incoming_sms():
                 msg = chatbot.final_response(company)
                 resp.message(msg)
             elif body >= 10000:
-                new_companies = chatbot.search_by_zip(companies, body)
-                addresses = chatbot.all_addresses(new_companies)
+                companies = chatbot.search_by_zip(companies, body)
+                addresses = chatbot.all_addresses(companies)
                 msg = str(chatbot.format_addresses(addresses))
                 if len(msg) <= message_limit:
                     resp.message(msg)
