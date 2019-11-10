@@ -101,18 +101,27 @@ def search_by_zip(companies, given_zip):
 	return results
 
 
-def all_results(companies):
+def all_addresses(companies):
 	addresses = []
 	for company in companies:
 		addresses.append(address(company))
 	return list(enumerate(addresses, 1))
+
+def format_addresses(addresses):
+	result = "\nHere are possible matches \n"
+	for address in addresses:
+		result += str(address[0]) + ". " + str(address[1]) + "\n"
+	result += "Please text back the number of the company you're interested in"
+	return result
 
 def final_response(row):
 	c_name = str(row["trade_nm"])
 	backwages = str(bw_amt(row))
 	cmp_assessed = str(cmp_assd(row))
 	case_cnt = str(case_counts(row))
-	return f"{c_name}: # of cases: {case_cnt}, Wage Theft ${backwages}, Fines owed to government ${cmp_assessed}"
+	company_info = f"\n{c_name}: \nNumber of labor violations: {case_cnt} \nWages kept from employees: ${backwages} \nFines owed to government: ${cmp_assessed}"
+	plug = "\nTo learn more visit www.documentedny.com"
+	return company_info + plug
 
 
 
